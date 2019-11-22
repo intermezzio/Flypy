@@ -7,7 +7,7 @@ class Vector:
         self.y = y
         self.z = z
 
-    def self.mag(self):
+    def mag(self):
         return (self.x**2 + self.y**2 + self.z**2) ** 1/2
 
     def __add__(self, v2):
@@ -15,6 +15,9 @@ class Vector:
 
     def __mul__(self, scalar):
         return Vector(self.x * scalar, self.y * scalar, self.z * scalar)
+
+    def __truediv__(self, scalar):
+        return Vector(self.x / scalar, self.y / scalar, self.z / scalar)
 
     def dotP(self, v2):
         self.x *= v2.x
