@@ -25,5 +25,6 @@ class Vector:
         self.z *= v2.z
         return
 
-    def crossP(self, v2):
+    def cross_product(self, v2):
+        raise NotImplementedError
         pass
