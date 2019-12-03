@@ -32,3 +32,8 @@ class Vector:
 
     def numpy(self):
         return np.array([self.x, self.y, self.z])
+    
+    def from_numpy(self, arry):
+        self.x = arry[0]
+        self.y = arry[1]
+        self.z = arry[2]
