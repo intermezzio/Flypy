@@ -1,4 +1,5 @@
 
+import numpy as np
 
 class Vector:
 
@@ -28,3 +29,6 @@ class Vector:
     def cross_product(self, v2):
         raise NotImplementedError
         pass
+
+    def numpy(self):
+        return np.array([self.x, self.y, self.z])
