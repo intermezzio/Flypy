@@ -25,7 +25,8 @@ class Drone():
                 rotor_radius=15,
                 weight=50,
                 size=10,
-                m_of_i=1):
+                m_of_i=1,
+                r_m_of_i=1):
         """
         Constructor.
 
@@ -34,6 +35,7 @@ class Drone():
             weight: Weight of the drone in g
             size: Size of the drone in m
             m_of_i: Moment of inertia of the drone
+            r_m_of_i: Moment of inertia of one rotor
         """
         self.yaw = 0
         self.pitch = 0
@@ -41,9 +43,12 @@ class Drone():
         self.pos = Vector()
         self.velocity = Vector()
         self.r_speed = [0, 0, 0, 0]
+
         self.r = rotor_radius
         self.weight = weight
         self.size = size
+        self.m_of_i = m_of_i
+        self.r_m_of_i = r_m_of_i
 
     def update(self, dt=1, g=-9.81):
         """
@@ -133,10 +138,7 @@ class Drone():
         Returns:
             float: Change in yaw given current rotor speeds
         """
-        def calc_angular_momentum(speed, direction):
-            # TODO How do?
-            pass
-        angular_momentum = [calc_angular_momentum(s) for s in self.r_speed]
+        angular_momentum = [self.r_m_of_i * s for s in self.r_speed]
         # Get correct directions for angular momentum
         angular_momentum *= [1, -1, 1, -1]
 
