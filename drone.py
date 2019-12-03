@@ -19,15 +19,17 @@ class Drone():
         r: Radius of the drone rotors in m
         weight: Weight of the drone in g
         size: Size of the drone in m
-        m_of_i: Moment of inertia of the drone
-        r_m_of_i: Moment of inertia of one rotor
+        m_of_i_xx: Moment of inertia of the drone around the x axis
+        m_of_i_zz: Moment of inertia of the drone around the z axis
+        m_of_i_r: Moment of inertia of one rotor
     """
     def __init_(self,
                 rotor_radius=15,
                 weight=50,
                 size=10,
-                m_of_i=1,
-                r_m_of_i=1):
+                m_of_i_xx=1,
+                m_of_i_zz=1,
+                m_of_i_r=1):
         """
         Constructor.
 
@@ -35,8 +37,9 @@ class Drone():
             rotor_radius: Radius of the drone rotors in m
             weight: Weight of the drone in g
             size: Size of the drone in m
-            m_of_i: Moment of inertia of the drone
-            r_m_of_i: Moment of inertia of one rotor
+            m_of_i_xx: Moment of inertia of the drone around the x axis
+            m_of_i_zz: Moment of inertia of the drone around the z axis
+            m_of_i_r: Moment of inertia of one rotor
         """
         self.yaw = 0
         self.pitch = 0
@@ -48,8 +51,9 @@ class Drone():
         self.r = rotor_radius
         self.weight = weight
         self.size = size
-        self.m_of_i = m_of_i
-        self.r_m_of_i = r_m_of_i
+        self.m_of_i_xx = m_of_i_xx
+        self.m_of_i_zz = m_of_i_zz
+        self.m_of_i_r = m_of_i_r
 
 
     def change_rotor_speed(r_speed):
@@ -144,7 +148,7 @@ class Drone():
         total_force = front_force - back_force
 
         torque = total_force * self.size / 2
-        rotation = torque / self.m_of_i
+        rotation = torque / self.m_of_i_xx
 
         return rotation
 
@@ -155,12 +159,12 @@ class Drone():
         Returns:
             float: Change in yaw given current rotor speeds
         """
-        angular_momentum = [self.r_m_of_i * s for s in self.r_speed]
+        angular_momentum = [self.m_of_i_r * s for s in self.r_speed]
         # Get correct directions for angular momentum
         angular_momentum *= [1, -1, 1, -1]
 
         total_angular_momentum = sum(angular_momentum)
-        rotation = total_angular_momentum / self.m_of_i
+        rotation = total_angular_momentum / self.m_of_i_zz
 
         return rotation
 
