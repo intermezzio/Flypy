@@ -67,7 +67,7 @@ class Drone():
         """
         # Update rotor speeds if necessary
         if r_speed is not None:
-            change_rotor_speed(r_speed)
+            self.change_rotor_speed(r_speed)
 
         # Calculate acceleration in all 3 axis
         thrust = self.calc_thrust()
