@@ -45,16 +45,32 @@ class Drone():
         self.weight = weight
         self.size = size
 
-    def update(self, dt=1, g=-9.81):
+
+    def change_rotor_speed(r_speed):
+        """
+        Changes the speeds of the four rotors as necessary
+
+        Parameters:
+            r_speed: Array of all four rotor speeds
+        """
+        if len(r_speed) == 4:
+            self.r_speed = r_speed
+
+    def update(self, dt=1, g=-9.81, r_speed=None):
         """
         Calculate the change in each positional variable and apply them
 
         Parameters:
             dt: Timestep size
             g: Force due to gravity
+            r_speed: Array of all four rotor speeds
         """
+        # Update rotor speeds if necessary
+        if r_speed is not None:
+            change_rotor_speed(r_speed)
+
         # Calculate acceleration in all 3 axis
-        thrust = self.calc_thrust
+        thrust = self.calc_thrust()
         gravity = Vector(0, 0, g)
         total_force = thrust + gravity
         acceleration = total_force / self.weight
@@ -70,7 +86,7 @@ class Drone():
         self.roll += roll * dt
         self.pitch += pitch * dt
         self.yaw += yaw * dt
-    
+
     def calc_thrust(self):
         """
         Calculates the thrust given current yaw / pitch / roll and returns a
@@ -125,7 +141,7 @@ class Drone():
         rotation = torque / self.m_of_i
 
         return rotation
-        
+
     def calc_yaw(self):
         """
         Calculate the change in yaw
