@@ -1,14 +1,13 @@
 from vector import Vector
 from math import pi, cos, sin
 
-class Drone():
+class Drone:
     """
     Drone class.
 
     Attributes:
-        yaw: The yaw of the drone
-        pitch: The pitch of the drone
-        roll: The roll of the drone
+        rotation: Roll, pitch and yaw stored as a vector
+        rotation_velocity: Roll, pitch and yaw stored as a vector
         pos: Current drone position as a vector
         velocity: Current velocity of the drone as a vector
         r_speed: List of rotor speeds where index 0 is top left, index 1 if top
@@ -23,13 +22,13 @@ class Drone():
         m_of_i_zz: Moment of inertia of the drone around the z axis
         m_of_i_r: Moment of inertia of one rotor
     """
-    def __init_(self,
-                rotor_radius=15,
-                weight=50,
-                size=10,
-                m_of_i_xx=1,
-                m_of_i_zz=1,
-                m_of_i_r=1):
+    def __init__(self,
+                 rotor_radius=15,
+                 weight=50,
+                 size=10,
+                 m_of_i_xx=1,
+                 m_of_i_zz=1,
+                 m_of_i_r=1):
         """
         Constructor.
 
@@ -41,9 +40,8 @@ class Drone():
             m_of_i_zz: Moment of inertia of the drone around the z axis
             m_of_i_r: Moment of inertia of one rotor
         """
-        self.yaw = 0
-        self.pitch = 0
-        self.roll = 0
+        self.rotation = Vector()
+        self.rotation_velocity = Vector()
         self.pos = Vector()
         self.velocity = Vector()
         self.r_speed = [0, 0, 0, 0]
@@ -93,9 +91,6 @@ class Drone():
         # Apply deltas
         self.pos += self.velocity * dt
         self.velocity += acceleration * dt
-        self.roll += roll * dt
-        self.pitch += pitch * dt
-        self.yaw += yaw * dt
 
     def calc_thrust(self):
         """
