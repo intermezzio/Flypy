@@ -1,0 +1,7 @@
+# TODO:
+# Moment of inertia drone
+# Moment of inertia of rotors
+# Weight of drone
+# Rotor speeds in radians
+# Radius of the drone in m
+# Drag coeficient (?)
