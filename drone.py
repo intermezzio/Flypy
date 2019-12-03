@@ -20,6 +20,7 @@ class Drone():
         weight: Weight of the drone in g
         size: Size of the drone in m
         m_of_i: Moment of inertia of the drone
+        r_m_of_i: Moment of inertia of one rotor
     """
     def __init_(self,
                 rotor_radius=15,
