@@ -1,0 +1,10 @@
+All Tasks:
+
+constants
+
+
+TODO:
+
+Apply torques => yaw
+
+go from torques to speed/pos

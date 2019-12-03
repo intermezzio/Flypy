@@ -17,18 +17,21 @@ params = [
     "v_z",
     "roll",
     "pitch",
-    "yaw",
+    "yaw"
 ]
 
 # data = pd.DataFrame(cols=params)
 
 t_end = 100
-dt = 1
+dt = .1
 drone = Drone(rotor_radius=15,
               weight=50,
               size=10,
               m_of_i=1)
 
-for i in range(0, t_end, dt):
+drone_props = pd.DataFrame(columns=["x", "y", "z", "vx", "vy", "vz", "roll", "pitch", "yaw"])
+drone_props.loc[0] = drone.get_params()
+
+for i in np.arange(0, t_end, dt):
     drone.update(dt=dt)
     ret = drone.get_params()

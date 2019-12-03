@@ -1,7 +1,8 @@
 from vector import Vector
 from math import pi, cos, sin
+import numpy as np
 
-class Drone():
+class Drone:
     """
     Drone class.
 
@@ -22,7 +23,7 @@ class Drone():
         m_of_i: Moment of inertia of the drone
         r_m_of_i: Moment of inertia of one rotor
     """
-    def __init_(self,
+    def __init__(self,
                 rotor_radius=15,
                 weight=50,
                 size=10,
