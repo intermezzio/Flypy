@@ -1,9 +1,9 @@
 import numpy as np
-import scipy as scp
-import sympy as smp
-import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
+# import scipy as scp
+# import sympy as smp
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 
 from drone import Drone
 
@@ -24,14 +24,13 @@ params = [
 
 t_end = 100
 dt = .1
-drone = Drone(rotor_radius=15,
-              weight=50,
-              size=10,
-              m_of_i=1)
+drone = Drone()
 
 drone_props = pd.DataFrame(columns=["x", "y", "z", "vx", "vy", "vz", "roll", "pitch", "yaw"])
 drone_props.loc[0] = drone.get_params()
 
-for i in np.arange(0, t_end, dt):
+for index, i in enumerate(np.arange(0, t_end, dt)):
     drone.update(dt=dt)
-    ret = drone.get_params()
+    drone_props.loc[i] = drone.get_params()
+
+print(drone_props)

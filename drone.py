@@ -80,7 +80,7 @@ class Drone:
 
         # Apply deltas
         self.pos += self.velocity * dt
-        self.velocity += acceleration * dt
+        self.velocity += total_acceleration * dt
         self.rot += self.if_angular_vel * dt
         self.bf_angular_vel += bf_angular_accel * dt
         self.if_angular_vel += if_angular_accel * dt
@@ -158,7 +158,9 @@ class Drone:
                            np.matmul(vel_t_matrix, vel_matrix)
 
         # Convert back to vector
-        if_angular_accel = Vector().from_numpy(lf_angular_accel)
+        if_angular_accel = Vector(x=if_angular_accel[0],
+                                  y=if_angular_accel[1],
+                                  z=if_angular_accel[2])
         return if_angular_accel
 
     def calc_body_frame_accel(self):
