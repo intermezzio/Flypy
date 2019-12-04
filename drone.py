@@ -30,7 +30,8 @@ class Drone:
                  size=0.225,
                  m_of_i_xx=4.856e-3,
                  m_of_i_zz=8.801e-3,
-                 m_of_i_r=3.357e-5):
+                 m_of_i_r=3.357e-5,
+                 init_pos=Vector()):
         """
         Constructor.
 
@@ -40,11 +41,12 @@ class Drone:
             m_of_i_xx: Moment of inertia of the drone around the x axis
             m_of_i_zz: Moment of inertia of the drone around the z axis
             m_of_i_r: Moment of inertia of one rotor
+            init_pos: Initial position of the drone as a vector
         """
         self.rot = Vector()
         self.bf_angular_vel = Vector()
         self.if_angular_vel = Vector()
-        self.pos = Vector()
+        self.pos = init_pos
         self.velocity = Vector()
         self.r_speed = [0, 0, 0, 0]
 
