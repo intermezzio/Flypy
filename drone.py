@@ -26,11 +26,11 @@ class Drone:
         m_of_i_r: Moment of inertia of one rotor
     """
     def __init__(self,
-                 mass=50,
-                 size=10,
-                 m_of_i_xx=1,
-                 m_of_i_zz=1,
-                 m_of_i_r=1):
+                 mass=0.468,
+                 size=0.225,
+                 m_of_i_xx=4.856e-3,
+                 m_of_i_zz=8.801e-3,
+                 m_of_i_r=3.357e-5):
         """
         Constructor.
 
@@ -229,7 +229,7 @@ class Drone:
 
         return angular_accel
 
-    def calc_yaw(self, drag_coef=1):
+    def calc_yaw(self, drag_coef=1.14e-7):
         """
         Calculate the angular acceleration of yaw in the body frame
 
@@ -247,7 +247,7 @@ class Drone:
 
         return angular_accel
 
-    def calc_rotor_force(self, speed, lift_coef=1):
+    def calc_rotor_force(self, speed, lift_coef=0.225):
         """
         Calculate the force of a rotor given a rotor speed.
 
