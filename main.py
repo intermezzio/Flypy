@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 # import scipy as scp
 # import sympy as smp
-# import matplotlib.pyplot as plt
-# import seaborn as sns
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from drone import Drone
 

@@ -195,8 +195,8 @@ class Drone:
         yaw = self.calc_yaw()
 
         external_torques = Vector(x=roll, y=pitch, z=yaw)
-        gyro_force = self.calc_gyro()
         cent_force = self.calc_cent()
+        gyro_force = self.calc_gyro()
 
         bf_angular_accel = cent_force - gyro_force + external_torques
         return bf_angular_accel
@@ -223,8 +223,8 @@ class Drone:
             Vector: Vector of the body frame angular acceleration due to
             gyroscopic force
         """
-        total_speed = sum([i if i == 0 or i == 3 else -1
-                           for i in self.r_speed])
+        total_speed = [spd * ((i in (1,2)) * 2 - 1)
+                            for i, spd in enumerate(self.r_speed)]
         gyro_force = Vector(x=self.bf_angular_vel.y / self.m_of_i_xx,
                             y=-self.bf_angular_vel.x / self.m_of_i_xx,
                             z=0)
