@@ -284,7 +284,7 @@ class Drone:
                   self.velocity.x,
                   self.velocity.y,
                   self.velocity.z,
-                  self.roll,
-                  self.pitch,
-                  self.yaw]
+                  self.rot.x,
+                  self.rot.y,
+                  self.rot.z]
         return params
