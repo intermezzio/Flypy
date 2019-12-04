@@ -31,7 +31,8 @@ class Drone:
                  m_of_i_xx=4.856e-3,
                  m_of_i_zz=8.801e-3,
                  m_of_i_r=3.357e-5,
-                 init_pos=Vector(z=10)):
+                 init_pos=Vector(z=10),
+                 r_speed=[0,0,0,0]):
         """
         Constructor.
 
@@ -55,20 +56,22 @@ class Drone:
         self.m_of_i_xx = m_of_i_xx
         self.m_of_i_zz = m_of_i_zz
         self.m_of_i_r = m_of_i_r
+        self.r_speed = r_speed
+        self.time = 0
 
-    def anglify(self, angle, max = 2 * pi, min = 0):
+    def anglify(self, angle, a_max = 2 * pi, a_min = 0):
         """
         Calculate the proper angle by subtracting 2pi when possible
 
         Parameters:
             angle: The angle to be changed
-            max: The maximum value the angle can be
-            min: The minimum value the angle can be
+            a_max: The maximum value the angle can be
+            a_min: The minimum value the angle can be
 
         Returns:
             Float: The refined angle measurement
         """
-        new_angle = (angle - min) % (max - min) + min
+        new_angle = (angle - a_min) % (a_max - a_min) + a_min
 
         return new_angle
 
@@ -101,9 +104,11 @@ class Drone:
         self.bf_angular_vel += bf_angular_accel * dt
         self.if_angular_vel += if_angular_accel * dt
 
-        self.rot.x = self.anglify(self.rot.x, min=-pi, max=pi)
-        self.rot.y = self.anglify(self.rot.y, min=-pi, max=pi)
-        self.rot.z = self.anglify(self.rot.z, min=0, max=2*pi)
+        self.rot.x = self.anglify(self.rot.x, a_min=-pi, a_max=pi)
+        self.rot.y = self.anglify(self.rot.y, a_min=-pi, a_max=pi)
+        self.rot.z = self.anglify(self.rot.z, a_min=0, a_max=2*pi)
+
+        self.time += dt
 
     def calc_thrust(self):
         """
@@ -182,8 +187,11 @@ class Drone:
         # print("vel_matrix", vel_matrix)
         if_angular_accel = np.matmul(accel_t_matrix, accel_matrix) + \
                            np.matmul(vel_t_matrix, vel_matrix)
-        # print("accel", [i for i in np.matmul(accel_t_matrix, accel_matrix)])
-        # print("vel",  [(f"{i} ") for i in np.matmul(vel_t_matrix, vel_matrix)])
+        # print("accel", *[i for i in np.matmul(accel_t_matrix, accel_matrix)])
+        # print("inv_accel", *[i for i in np.matmul(accel_matrix, accel_t_matrix)])
+        # print("vel",  *[i for i in np.matmul(vel_t_matrix, vel_matrix)])
+        # print("inv_vel",  *[i for i in np.matmul(vel_matrix, vel_t_matrix)])
+
         # input()
         # Convert back to vector
         if_angular_accel = Vector(x=if_angular_accel[0],
@@ -322,5 +330,6 @@ class Drone:
                   self.velocity.z,
                   self.rot.x,
                   self.rot.y,
-                  self.rot.z]
+                  self.rot.z,
+                  self.time]
         return params
