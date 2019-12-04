@@ -245,8 +245,8 @@ class Drone:
         Returns:
             float: Angular acceleration of either roll or pitch
         """
-        total_speed = -(front_speed ** 2) + (back_speed ** 2)
-        total_force = self.calc_rotor_force(total_speed)
+        total_force = -self.calc_rotor_force(front_speed) + \
+                       self.calc_rotor_force(back_speed)
         torque = total_force * self.size
 
         angular_accel = torque / self.m_of_i_xx
