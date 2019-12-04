@@ -34,9 +34,9 @@ drone_props.loc[0] = drone.get_params()
 drone_commands = {1: [hover_speed, hover_speed, 0, 0]}
 
 for index, i in enumerate(np.arange(0, t_end, dt)):
-    if dt in drone_commands.keys():
+    if i in drone_commands.keys():
         print("Go")
-        drone.change_rotor_speed(drone_commands[dt])
+        drone.change_rotor_speed(drone_commands[i])
     drone.update(dt=dt)
     drone_props.loc[i] = drone.get_params()
 
