@@ -22,17 +22,21 @@ params = [
 
 # data = pd.DataFrame(cols=params)
 
-t_end = 1
+t_end = 2
 dt = 0.001
 drone = Drone()
 # Hover speed
-init_speed = 5.1012
-drone.change_rotor_speed([init_speed, init_speed, init_speed, init_speed])
+hover_speed = 5.1012
+drone.change_rotor_speed([hover_speed, hover_speed, hover_speed, hover_speed])
 
 drone_props = pd.DataFrame(columns=["x", "y", "z", "vx", "vy", "vz", "roll", "pitch", "yaw"])
 drone_props.loc[0] = drone.get_params()
+drone_commands = {1: [hover_speed, hover_speed, 0, 0]}
 
 for index, i in enumerate(np.arange(0, t_end, dt)):
+    if dt in drone_commands.keys():
+        print("Go")
+        drone.change_rotor_speed(drone_commands[dt])
     drone.update(dt=dt)
     drone_props.loc[i] = drone.get_params()
 
