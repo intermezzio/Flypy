@@ -57,7 +57,8 @@ def runDrone(drone, dx = 0, dy = 0, dz = 0):
     sdDist = lambda x, y, z: sqrt(x**2 + y**2 + z**2)
     totDist = sdDist(dx, dy, dz)
     
-    drone_props = pd.DataFrame(columns=["x", "y", "z", "vx", "vy", "vz", "roll", "pitch", "yaw", "time"])
+    drone_props = pd.DataFrame(columns=["x", "y", "z",
+        "vx", "vy", "vz", "roll", "pitch", "yaw", "time"])
     
     i = 0
     drone_props.loc[i] = drone.get_params()
@@ -94,29 +95,46 @@ def angleToCardinal(angle):
     cardinals = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
     return cardinals[direction]
 
-# Run drone to fly
+# Assign target drone coordinates
 target_xyz = (3,3,3) if len(sys.argv) < 4 else [int(i) for i in sys.argv[1:4]]
+
+# Solutions is a nested dictionary
 solutions = dict()
 min_dist = np.inf
+
+# Min_props is a dicitonary for optimal settings
 min_props = dict()
 
+# Sweep through drone attributes
 for hover_spd in range(580, 740, 20):
+    # Create nested dict
     solutions[hover_spd] = dict()
     print("hover_spd:", hover_spd)
-    for angle in np.arange(0,2*pi, pi/4):
+
+    for angle in np.arange(0,2*pi, pi/4): # sweep 45 degrees at a time around in a circle
+
         c_angle = angleToCardinal(angle)
         solutions[hover_spd][c_angle] = dict()
-        for rollpitch_power in (1, 5):
+
+        for rollpitch_power in (1, 5): # choose between a lot and a little roll/pitch
             solutions[hover_spd][c_angle][rollpitch_power] = dict()
-            for yaw_power in (-1, 0, 1):
+
+            for yaw_power in (-1, 0, 1): # choose yaw and direction
                 thisCase = dict()
+
+                # Generate rotor speeds from properties
                 r_speed = goodRotorSpeeds(hover_spd, rollpitch=angle, 
                           rollpitch_power=rollpitch_power, yaw_power=yaw_power)
+                
+                # Create drone and model it
                 drone = Drone(r_speed=r_speed)
                 x, y, z, t, dist = runDrone(drone, *target_xyz)
+                
+                # Store values
                 thisCase["x"], thisCase["y"], thisCase["z"] = x, y, z
                 thisCase["t"], thisCase["dist"] = t, dist
-                # print(thisCase)
+                
+                # if optimal solution
                 if thisCase["dist"] < min_dist:
                     min_props = {
                         "hover_spd": hover_spd,
@@ -131,11 +149,14 @@ for hover_spd in range(580, 740, 20):
                     }
                     min_dist = thisCase["dist"]
                 solutions[hover_spd][c_angle][rollpitch_power][yaw_power] = thisCase
+
+# Create full dictionary
 full_dict = {
     "tries": solutions,
     "key": min_props
 }
 
+# Write to JSON
 with open(f"x{target_xyz[0]}y{target_xyz[1]}z{target_xyz[2]}.json", "w") as js:
     json.dump(full_dict, js, indent=4, sort_keys=True)
 
