@@ -170,17 +170,28 @@ class Drone:
                                   (_dthe * sin(_phi) * tan(_the) / cos(_the)),
                                   (-_dphi * sin(_phi) / cos(_the)) + \
                                   (_dthe * cos(_phi) * tan(_the) / cos(_the))]])
-
+        # print("pt1", (_dphi * cos(_phi) / cos(_the)))
+        # print("pt2", (_dthe * sin(_phi) * tan(_the) / cos(_the)))
+        # print("pt3", -_dphi * sin(_phi) / cos(_the))
+        # print("pt4", (_dthe * cos(_phi) * tan(_the) / cos(_the)))
+        # print(locals())
         accel_matrix = bf_angular_accel.numpy()
         vel_matrix = self.bf_angular_vel.numpy()
-
+        # print("accel_matrix", accel_matrix)
+        # print("vel_t_matrix", vel_t_matrix)
+        # print("vel_matrix", vel_matrix)
         if_angular_accel = np.matmul(accel_t_matrix, accel_matrix) + \
                            np.matmul(vel_t_matrix, vel_matrix)
-
+        # print("accel", [i for i in np.matmul(accel_t_matrix, accel_matrix)])
+        # print("vel",  [(f"{i} ") for i in np.matmul(vel_t_matrix, vel_matrix)])
+        # input()
         # Convert back to vector
         if_angular_accel = Vector(x=if_angular_accel[0],
                                   y=if_angular_accel[1],
                                   z=if_angular_accel[2])
+
+        # print("if yaw", if_angular_accel.z)
+
         return if_angular_accel
 
     def calc_body_frame_accel(self):
@@ -213,6 +224,7 @@ class Drone:
                                   y=self.bf_angular_vel.y * self.m_of_i_xx,
                                   z=self.bf_angular_vel.z * self.m_of_i_zz)
         cent_force = (self.bf_angular_vel * -1).cross_product(inertia_velocity)
+        # print("centripetal yaw", cent_force.z)
         return cent_force
 
     def calc_gyro(self):
@@ -223,8 +235,8 @@ class Drone:
             Vector: Vector of the body frame angular acceleration due to
             gyroscopic force
         """
-        total_speed = [spd * ((i in (1,2)) * 2 - 1)
-                            for i, spd in enumerate(self.r_speed)]
+        total_speed = sum([spd * ((i in (1,2)) * 2 - 1)
+                            for i, spd in enumerate(self.r_speed)])
         gyro_force = Vector(x=self.bf_angular_vel.y / self.m_of_i_xx,
                             y=-self.bf_angular_vel.x / self.m_of_i_xx,
                             z=0)
@@ -263,15 +275,15 @@ class Drone:
         torques = [drag_coef * (s ** 2) for s in self.r_speed]
         # Flip the direction of one diagnol of rotors to account for
         # counter-clockwise rotation
-        torques[1] *= -1
-        torques[2] *= -1
+        torques[0] *= -1
+        torques[3] *= -1
         total_torque = sum(torques)
 
         angular_accel = total_torque / self.m_of_i_zz
 
         return angular_accel
 
-    def calc_rotor_force(self, speed, lift_coef=0.225):
+    def calc_rotor_force(self, speed, lift_coef=2.980e-6):
         """
         Calculate the force of a rotor given a rotor speed.
 
