@@ -265,7 +265,7 @@ class Drone:
         """
         return lift_coef * speed
 
-    def change_rotor_speed(r_speed):
+    def change_rotor_speed(self, r_speed):
         """
         Changes the speeds of the four rotors as necessary
 

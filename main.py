@@ -22,9 +22,12 @@ params = [
 
 # data = pd.DataFrame(cols=params)
 
-t_end = 100
-dt = .1
+t_end = 1
+dt = 0.001
 drone = Drone()
+# Hover speed
+init_speed = 5.1012
+drone.change_rotor_speed([init_speed, init_speed, init_speed, init_speed])
 
 drone_props = pd.DataFrame(columns=["x", "y", "z", "vx", "vy", "vz", "roll", "pitch", "yaw"])
 drone_props.loc[0] = drone.get_params()
