@@ -79,6 +79,21 @@ def angleToCardinal(angle):
     cardinals = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
     return cardinals[direction]
 
+def cardinalToAngle(cardinal):
+    """
+    Given a direction, return the angle
+    
+    Parameters:
+        cardinal: The direction
+
+    Returns:
+        Float: Angle (radians)
+    """
+    cardinals = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+    indx = cardinals.index(cardinal)
+
+    return pi/4 * indx
+
 # Assign target drone coordinates
 target_xyz = (3,3,3) if len(sys.argv) < 4 else [int(i) for i in sys.argv[1:4]]
 
