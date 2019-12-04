@@ -56,6 +56,22 @@ class Drone:
         self.m_of_i_zz = m_of_i_zz
         self.m_of_i_r = m_of_i_r
 
+    def anglify(self, angle, max = 2 * pi, min = 0):
+        """
+        Calculate the proper angle by subtracting 2pi when possible
+
+        Parameters:
+            angle: The angle to be changed
+            max: The maximum value the angle can be
+            min: The minimum value the angle can be
+
+        Returns:
+            Float: The refined angle measurement
+        """
+        new_angle = (angle - min) % (max - min) + min
+
+        return new_angle
+
     def update(self, dt=1, g=9.81, r_speed=None):
         """
         Calculate the change in each positional variable and apply them
@@ -84,6 +100,10 @@ class Drone:
         self.rot += self.if_angular_vel * dt
         self.bf_angular_vel += bf_angular_accel * dt
         self.if_angular_vel += if_angular_accel * dt
+
+        self.rot.x = self.anglify(self.rot.x, min=-pi, max=pi)
+        self.rot.y = self.anglify(self.rot.y, min=-pi, max=pi)
+        self.rot.z = self.anglify(self.rot.z, min=0, max=2*pi)
 
     def calc_thrust(self):
         """

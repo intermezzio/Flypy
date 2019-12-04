@@ -26,8 +26,8 @@ t_end = 2
 dt = 0.001
 drone = Drone()
 # Hover speed
-hover_speed = 5.1012
-drone.change_rotor_speed([hover_speed, hover_speed, hover_speed, hover_speed])
+init_speed = 5.1012
+drone.change_rotor_speed([init_speed + 0.1, init_speed - 0.1, init_speed + 0.1, init_speed - 0.1])
 
 drone_props = pd.DataFrame(columns=["x", "y", "z", "vx", "vy", "vz", "roll", "pitch", "yaw"])
 drone_props.loc[0] = drone.get_params()
