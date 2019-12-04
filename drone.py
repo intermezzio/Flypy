@@ -8,16 +8,17 @@ class Drone:
 
     Attributes:
         rot: Roll, pitch and yaw stored as a vector
-        bf_rot_vel: Roll, pitch and yaw for the body frame stored as a vector
-        if_rot_vel: Roll, pitch and yaw for the inertial frame stored as a vector
+        bf_angular_vel: Roll, pitch and yaw angular velocity for the body frame
+        stored as a vector
+        if_angular_vel: Roll, pitch and yaw angular velocity for the inertial
+        frame stored as a vector
         pos: Current drone position as a vector
         velocity: Current velocity of the drone as a vector
-        r_speed: List of rotor speeds where index 0 is top left, index 1 if top
+        r_speed: List of rotor speeds where index 0 is top left, index 1 is top
         right, index 2 is bottom left and index 3 is bottom right
                  Ex: [10, 9, 5, 8] is 10   09
                                          x
                                       05   08
-        r: Radius of the drone rotors in m
         mass: Weight of the drone in g
         size: Size of the drone in m
         m_of_i_xx: Moment of inertia of the drone around the x axis
@@ -25,7 +26,6 @@ class Drone:
         m_of_i_r: Moment of inertia of one rotor
     """
     def __init__(self,
-                 rotor_radius=15,
                  mass=50,
                  size=10,
                  m_of_i_xx=1,
@@ -35,7 +35,6 @@ class Drone:
         Constructor.
 
         Parameters:
-            rotor_radius: Radius of the drone rotors in m
             mass: Weight of the drone in g
             size: Size of the drone in m
             m_of_i_xx: Moment of inertia of the drone around the x axis
@@ -43,13 +42,12 @@ class Drone:
             m_of_i_r: Moment of inertia of one rotor
         """
         self.rot = Vector()
-        self.bf_rot_vel = Vector()
-        self.if_rot_vel = Vector()
+        self.bf_angular_vel = Vector()
+        self.if_angular_vel = Vector()
         self.pos = Vector()
         self.velocity = Vector()
         self.r_speed = [0, 0, 0, 0]
 
-        self.r = rotor_radius
         self.mass = mass
         self.size = size
         self.m_of_i_xx = m_of_i_xx
@@ -81,9 +79,9 @@ class Drone:
         # Apply deltas
         self.pos += self.velocity * dt
         self.velocity += acceleration * dt
-        self.rot += self.if_rot_vel
-        self.bf_rot_vel += bf_angular_accel
-        self.if_rot_vel += if_angular_accel
+        self.rot += self.if_angular_vel * dt
+        self.bf_angular_vel += bf_angular_accel * dt
+        self.if_angular_vel += if_angular_accel * dt
 
     def calc_thrust(self):
         """
@@ -122,8 +120,8 @@ class Drone:
         """
         _phi = self.rot.x
         _the = self.rot.y
-        _dphi = self.if_rot_vel.x
-        _dthe = self.if_rot_vel.y
+        _dphi = self.if_angular_vel.x
+        _dthe = self.if_angular_vel.y
 
         # Build matricies to rotate the angular acceleration
         accel_t_matrix = np.array([[1,
@@ -152,7 +150,7 @@ class Drone:
                                   (_dthe * cos(_phi) * tan(_the) / cos(_the))]])
 
         accel_matrix = bf_angular_accel.numpy()
-        vel_matrix = self.bf_rot_vel.numpy()
+        vel_matrix = self.bf_angular_vel.numpy()
 
         if_angular_accel = np.matmul(accel_t_matrix, accel_matrix) + \
                            np.matmul(vel_t_matrix, vel_matrix)
@@ -187,10 +185,10 @@ class Drone:
             Vector: Vector of the body frame angular acceleration due to
             centripetal force
         """
-        inertia_velocity = Vector(self.bf_rot_vel.x * self.m_of_i_xx,
-                                  self.bf_rot_vel.y * self.m_of_i_xx,
-                                  self.bf_rot_vel.z * self.m_of_i_zz)
-        cent_force = (self.bf_rot_vel * -1).cross_product(inertia_velocity)
+        inertia_velocity = Vector(self.bf_angular_vel.x * self.m_of_i_xx,
+                                  self.bf_angular_vel.y * self.m_of_i_xx,
+                                  self.bf_angular_vel.z * self.m_of_i_zz)
+        cent_force = (self.bf_angular_vel * -1).cross_product(inertia_velocity)
         return cent_force
 
     def calc_gyro(self):
@@ -203,8 +201,8 @@ class Drone:
         """
         total_speed = sum([i if i == 0 or i == 3 else -1
                            for i in self.r_speed])
-        gyro_force = Vector(self.bf_rot_vel.y / self.m_of_i_xx,
-                            -self.bf_rot_vel.x / self.m_of_i_xx,
+        gyro_force = Vector(self.bf_angular_vel.y / self.m_of_i_xx,
+                            -self.bf_angular_vel.x / self.m_of_i_xx,
                             0)
         gyro_force *= total_speed * self.m_of_i_zz
         return gyro_force
