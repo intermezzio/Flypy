@@ -110,14 +110,22 @@ class Drone:
         return thrust
 
     def calc_inertial_frame_accel(self, bf_angular_accel):
-        # Convert the angular accceleration from body frame to inertial frame
-        # Temp variables to make code less ugly. Also, _the is short for _theta
-        # I'm sorry
+        """
+        Calculate the inertial frame angular acceleration given the body frame
+        angular acceleration.
+
+        Parameters:
+            bf_angular_accel: Body frame angular accelerration as a vector
+
+        Returns:
+            Vector: Vector of the inertial frame angular acceleration
+        """
         _phi = self.rot.x
         _the = self.rot.y
         _dphi = self.if_rot_vel.x
         _dthe = self.if_rot_vel.y
 
+        # Build matricies to rotate the angular acceleration
         accel_t_matrix = np.array([[1,
                                     sin(_phi) * tan(_the),
                                     cos(_phi) * tan(_the)],
@@ -154,7 +162,12 @@ class Drone:
         return if_angular_accel
 
     def calc_body_frame_accel(self):
-        # Get angular accelerations in body frame
+        """
+        Calculate the body frame angular acceleration.
+
+        Returns:
+            Vector: Vector of the body frame angular acceleration
+        """
         roll = self.calc_roll_pitch(self.r_speed[0], self.r_speed[3])
         pitch = self.calc_roll_pitch(self.r_speed[1], self.r_speed[2])
         yaw = self.calc_yaw()
@@ -167,7 +180,13 @@ class Drone:
         return bf_angular_accel
 
     def calc_cent(self):
-        # Calculate angular acceleration due to centripital force
+        """
+        Calculate body frame angular acceleration due to centripetal force.
+
+        Returns:
+            Vector: Vector of the body frame angular acceleration due to
+            centripetal force
+        """
         inertia_velocity = Vector(self.bf_rot_vel.x * self.m_of_i_xx,
                                   self.bf_rot_vel.y * self.m_of_i_xx,
                                   self.bf_rot_vel.z * self.m_of_i_zz)
@@ -175,7 +194,13 @@ class Drone:
         return cent_force
 
     def calc_gyro(self):
-        # Calculate angular acceleration due to gyroscopic force
+        """
+        Calculate body frame angular acceleration due to gyroscopic force.
+
+        Returns:
+            Vector: Vector of the body frame angular acceleration due to
+            gyroscopic force
+        """
         total_speed = sum([i if i == 0 or i == 3 else -1
                            for i in self.r_speed])
         gyro_force = Vector(self.bf_rot_vel.y / self.m_of_i_xx,
@@ -186,8 +211,8 @@ class Drone:
 
     def calc_roll_pitch(self, front_speed, back_speed):
         """
-        Calculates the roll or pitch (depending on the rotor pair selected) in
-        the body frame
+        Calculates the angular acceleration of either the roll or pitch
+        (depending on the rotor pair selected) in the body frame
 
         Parameters:
             front_speed: The rotor speed of the front rotor of the pair being
@@ -208,7 +233,7 @@ class Drone:
 
     def calc_yaw(self, drag_coef=1):
         """
-        Calculate the change in yaw
+        Calculate the angular acceleration of yaw in the body frame
 
         Returns:
             float: Angular acceleration of yaw
@@ -227,7 +252,6 @@ class Drone:
     def calc_rotor_force(self, speed, lift_coef=1):
         """
         Calculate the force of a rotor given a rotor speed.
-        See this answer for reference: https://aviation.stackexchange.com/a/16550
 
         Parameters:
             speed: Speed of the rotor
