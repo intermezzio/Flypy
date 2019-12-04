@@ -27,8 +27,10 @@ class Vector:
         return
 
     def cross_product(self, v2):
-        raise NotImplementedError
-        pass
+        x = self.y * v2.z - self.z * v2.y
+        y = self.z * v2.x - self.x * v2.z
+        z = self.x * v2.y - self.y * v2.x
+        return Vector(x=x, y=y, z=z)
 
     def numpy(self):
         return np.array([self.x, self.y, self.z])
