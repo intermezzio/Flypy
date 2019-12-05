@@ -14,7 +14,8 @@ from sweep import moveDrone, cardinalToAngle, angleToCardinal
 # Establish the target destination through python cmd line args
 target_xyz = (3,3,3) if len(sys.argv) < 4 else tuple(int(i) for i in sys.argv[1:4])
 print(target_xyz)
-# open the json dict with all data
+
+# Open the json dict with all data
 # (or calculate it if it doesn't already exist)
 try:
 	with open(f"data/x{target_xyz[0]}y{target_xyz[1]}z{target_xyz[2]}.json",
@@ -26,16 +27,16 @@ except FileNotFoundError:
 				'r', encoding='utf-8') as data:
 		full_dict = json.loads(data.read())
 
-# extract motion data from full_dict
+# Extract motion data from full_dict
 tries = full_dict["tries"]
 optimal = full_dict["key"]
 
-# keep these values constant - consistent with the optimal solution
+# Keep these values constant - consistent with the optimal solution
 # (so we only plot 3 dimensions of data)
 right_rollpitch_power = optimal["rollpitch_power"]
 right_yaw = optimal["yaw_power"]
 
-# create figure
+# Create figure
 # Plot adapted from https://matplotlib.org/3.1.1/gallery/mplot3d/surface3d.html
 fig = plt.figure()
 ax = Axes3D(fig)
@@ -73,13 +74,13 @@ ax.set_zlabel("Distance to target (m)", rotation = 0)
 # # Add a color bar which maps values to colors
 # fig.colorbar(surf, shrink=0.5, aspect=5)
 
-# save a png file
+# Save a png file
 plt.savefig(f"data/x{target_xyz[0]}y{target_xyz[1]}z{target_xyz[2]}.png")
 
 # Animation adapted from
 # https://pythonmatplotlibtips.blogspot.com/2018/01/rotate-azimuth-angle-animation-3d-python-matplotlib-pyplot.html
 def animate(i):
-    # azimuth angle : 0 deg to 360 deg
+    # Azimuth angle : 0 deg to 360 deg
     ax.view_init(elev=10, azim=i*2)
     return fig,
 
