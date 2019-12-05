@@ -2,6 +2,8 @@
 
 This code models the flight of a quadrotor by supplying rotor speeds. Given a target location, the code will find out what rotor speeds help the drone arrive at the desired location.
 
+![](https://github.com/intermezzio/flypy/blob/master/data/x3y1z4.gif "Trajectory Heatmap")
+
 ## Using the software
 
 Clone this repository and run the plot.py script to model your drone. In the terminal, run it as so:
