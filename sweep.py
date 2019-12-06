@@ -157,7 +157,8 @@ def moveDrone(*target_xyz):
                             "min_dist": thisCase["dist"],
                             "x": thisCase["x"],
                             "y": thisCase["y"],
-                            "z": thisCase["z"]
+                            "z": thisCase["z"],
+                            "r_speed": r_speed
                         }
                         min_dist = thisCase["dist"]
                     solutions[hover_spd][c_angle][rollpitch_power][yaw_power] = thisCase

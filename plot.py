@@ -18,6 +18,7 @@ print(target_xyz)
 # Open the json dict with all data
 # (or calculate it if it doesn't already exist)
 try:
+	raise FileNotFoundError
 	with open(f"data/x{target_xyz[0]}y{target_xyz[1]}z{target_xyz[2]}.json",
 				'r', encoding='utf-8') as data:
 		full_dict = json.loads(data.read())
@@ -56,8 +57,11 @@ for i in range(len(X)):
 		Z[-1].append(new_z)
 Z = np.array(Z)
 
+for i, row in enumerate(Y):
+	for j, item in enumerate(row):
+		Y[i][j] = int(item * 180 / pi)
 # Plot the surface
-surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm_r,
                        linewidth=0, antialiased=False)
 
 # Customize the z axis
@@ -67,12 +71,14 @@ ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
 fig.suptitle(f"Drone Trajectory to ({target_xyz[0]},{target_xyz[1]},{target_xyz[2]})")
 ax.set_xlabel("Average Rotor Speed (Hz)")
-ax.set_ylabel("Roll-Pitch Bearing (rad)")
+ax.set_ylabel("Roll-Pitch Bearing (deg)")
 ax.zaxis.set_rotate_label(True)
 ax.set_zlabel("Distance to target (m)", rotation = 0)
 
-# # Add a color bar which maps values to colors
-# fig.colorbar(surf, shrink=0.5, aspect=5)
+# Add a color bar which maps values to colors
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+print(optimal["r_speed"])
 
 # Save a png file
 plt.savefig(f"data/x{target_xyz[0]}y{target_xyz[1]}z{target_xyz[2]}.png")
@@ -81,12 +87,12 @@ plt.savefig(f"data/x{target_xyz[0]}y{target_xyz[1]}z{target_xyz[2]}.png")
 # https://pythonmatplotlibtips.blogspot.com/2018/01/rotate-azimuth-angle-animation-3d-python-matplotlib-pyplot.html
 def animate(i):
     # Azimuth angle : 0 deg to 360 deg
-    ax.view_init(elev=10, azim=i*2)
+    ax.view_init(elev=10, azim=i*.5)
     return fig,
 
 # Animate
 ani = animation.FuncAnimation(fig, animate, init_func=lambda: (fig,),
-                               frames=180, interval=20, blit=True)
+                               frames=720, interval=20, blit=True)
 # save gif
 ani.save(f"data/x{target_xyz[0]}y{target_xyz[1]}z{target_xyz[2]}.gif",
 							   writer='imagemagick',fps=1000/50)
